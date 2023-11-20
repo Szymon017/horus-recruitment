@@ -10,8 +10,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Wall implements Structure {
+public class Wall implements Structure, CompositeBlock{
+
     private List<Block> blocks;
+
+    public Wall(List<Block> blocks) {
+        this.blocks = blocks;
+    }
 
     @Override
     public Optional<Block> findBlockByColor(String color) {
@@ -22,28 +27,31 @@ public class Wall implements Structure {
 
     @Override
     public List<Block> findBlocksByMaterial(String material) {
-        return Optional.ofNullable(blocks).orElse(Collections.emptyList()).stream()
-                .filter(b -> b.getMaterial().equals(material)).collect(Collectors.toList());
+
+        return Optional.ofNullable(blocks)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(b -> b.getMaterial().equals(material))
+                .collect(Collectors.toList());
     }
 
     @Override
     public int count() {
-        int count = 0;
-        for (Block block : blocks) {
-            count += countBlocks(block);
-        }
-        return count;
+        return getBlocks().size();
     }
 
-    private int countBlocks(Block block) {
-        int count = 1;
-        if (block instanceof CompositeBlock) {
-            List<Block> blocks1 = ((CompositeBlock) block).getBlocks();
-            for (Block block1 : blocks1) {
-                count += countBlocks(block1);
-            }
-        }
-        return count;
+    @Override
+    public List<Block> getBlocks() {
+        return blocks;
+    }
+
+    @Override
+    public String getColor() {
+        return "GivenColor";
+    }
+
+    @Override
+    public String getMaterial() {
+        return "GivenMaterial";
     }
 }
-
